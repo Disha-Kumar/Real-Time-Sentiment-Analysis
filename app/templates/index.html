@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Sentiment Analysis</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/react/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        const { useState } = React;
+
+        function App() {
+            const [tweet, setTweet] = useState('');
+            const [sentiment, setSentiment] = useState('');
+
+            const handleSubmit = () => {
+                axios.post('/get_sentiment', { tweet })
+                    .then(response => {
+                        setSentiment(response.data.sentiment);
+                    })
+                    .catch(error => {
+                        console.error('There was an error fetching the sentiment!', error);
+                    });
+            };
+
+            return (
+                <div>
+                    <h1>Real-Time Sentiment Analysis</h1>
+                    <label>
+                        Tweet:
+                        <input type="text" value={tweet} onChange={e => setTweet(e.target.value)} />
+                    </label>
+                    <button onClick={handleSubmit}>Get Sentiment</button>
+                    {sentiment && <h2>Sentiment: {sentiment}</h2>}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
